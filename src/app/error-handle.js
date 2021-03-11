@@ -32,6 +32,4 @@ const errorHandler = (error, ctx) => {
   ctx.body = message
 }
 
-module.exports = {
-  errorHandler,
-}
+module.exports = errorHandler
