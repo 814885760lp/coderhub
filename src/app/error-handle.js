@@ -13,6 +13,16 @@ const errorHandler = (error, ctx) => {
       message = '用户名已经存在~'
       break
 
+    case errorTypes.USER_DOSE_NOT_EXISTS:
+      status = 400 // 参数错误
+      message = '用户名不存在~'
+      break
+
+    case errorTypes.PASSWORD_IS_INCORRENT:
+      status = 400 // 参数错误
+      message = '密码错误~'
+      break
+
     default:
       status = 404
       message = 'NOT FOUND'
