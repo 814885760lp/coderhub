@@ -1,8 +1,9 @@
 const errorTypes = require('../constants/error-types')
-const service = require('../service/user.service')
+const userService = require('../service/user.service')
 const md5password = require('../utils/password-handle');
 
 const verifyUser = async (ctx, next) => {
+  console.log("用户登录验证的中间件");
   // 获取用户名和密码
   const { name, password } = ctx.request.body
 
@@ -13,7 +14,7 @@ const verifyUser = async (ctx, next) => {
   }
 
   // 用户名不能重复
-  const result = await service.getUserByName(name)
+  const result = await userService.getUserByName(name)
   if (result.length) {
     const error = new Error(errorTypes.USER_ALREADY_EXISTS)
     return ctx.app.emit('error', error, ctx)

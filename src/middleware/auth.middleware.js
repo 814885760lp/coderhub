@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const { PUBLIC_KEY } = require('../app/config')
 
 const errorTypes = require('../constants/error-types')
-const service = require('../service/user.service')
+const userService = require('../service/user.service')
 const md5password = require('../utils/password-handle')
 
 const verifyLogin = async (ctx, next) => {
@@ -16,7 +16,7 @@ const verifyLogin = async (ctx, next) => {
   }
 
   // 判断用户是否存在
-  const result = await service.getUserByName(name)
+  const result = await userService.getUserByName(name)
   const user = result[0]
   if (!user) {
     const error = new Error(errorTypes.USER_DOSE_NOT_EXISTS)
@@ -36,6 +36,8 @@ const verifyLogin = async (ctx, next) => {
 }
 
 const verifyAuth = async (ctx, next) => {
+  console.log('用户授权验证的中间件')
+  // 获取用户入参的token
   const authorization = ctx.request.headers.authorization // 获取token
 
   // 处理没有token的情况
@@ -50,8 +52,7 @@ const verifyAuth = async (ctx, next) => {
     const result = jwt.verify(token, PUBLIC_KEY, {
       algorithms: ['RS256'],
     })
-    ctx.user = result
-
+    ctx.user = result // verifyAuth为通用组件，将user存储起来，后面发布动态等中间件需要使用
     await next()
   } catch (err) {
     const error = errorTypes.UNAUTHORIZATION
