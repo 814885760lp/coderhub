@@ -4,9 +4,9 @@ class MomentController {
   async create(ctx, next) {
     // 获取动态
     const { content } = ctx.request.body
-    const { id } = ctx.user
+    const { id: user_id } = ctx.user
     // 插入动态数据到数据库
-    const result = await momentService.create(content, id)
+    const result = await momentService.create(content, user_id)
     // 返回数据
     ctx.body = result
   }
@@ -26,6 +26,20 @@ class MomentController {
     // 查询数据库
     const result = await momentService.list(offset, size)
     // 返回数据
+    ctx.body = result
+  }
+
+  async update(ctx, next) {
+    const { content } = ctx.request.body
+    const { comment_id } = ctx.params
+    const result = await momentService.update(content, comment_id)
+    ctx.body = result
+  }
+
+  async remove(ctx, next) {
+    const { comment_id } = ctx.params
+    console.log(comment_id);
+    const result = await momentService.remove(comment_id)
     ctx.body = result
   }
 }

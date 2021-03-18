@@ -20,9 +20,13 @@ const errorHandler = (error, ctx) => {
 
     case errorTypes.PASSWORD_IS_INCORRENT:
       status = 400 // 参数错误
-      message = '密码错误~'
+      message = '您输入的密码是错误的~'
       break
-
+      
+    case errorTypes.WITHOUTPERSSION:
+      status = 400 // 没有权限
+      message = '您暂无操作权限~'
+      break
     default:
       status = 404
       message = 'NOT FOUND'

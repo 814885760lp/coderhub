@@ -3,6 +3,7 @@ const { PUBLIC_KEY } = require('../app/config')
 
 const errorTypes = require('../constants/error-types')
 const userService = require('../service/user.service')
+const authService = require('../service/auth.service')
 const md5password = require('../utils/password-handle')
 
 const verifyLogin = async (ctx, next) => {
@@ -47,6 +48,7 @@ const verifyAuth = async (ctx, next) => {
   }
 
   const token = authorization.replace('Bearer ', '') // 截取出来真正的token6
+
   try {
     // 验证token
     const result = jwt.verify(token, PUBLIC_KEY, {
@@ -55,12 +57,32 @@ const verifyAuth = async (ctx, next) => {
     ctx.user = result // verifyAuth为通用组件，将user存储起来，后面发布动态等中间件需要使用
     await next()
   } catch (err) {
+    console.log(err)
     const error = errorTypes.UNAUTHORIZATION
     return new Error('error', error, ctx)
+  }
+}
+
+const verifyPerssion = async (ctx, next) => {
+
+  // 获取动态id和用户id
+  const { comment_id } = ctx.params // 动态id
+  const { id: user_id } = ctx.user // 发布者id
+
+  // 查询用户是否具有删除该条评论的权限
+  try {
+    const isPerssion = await authService.checkMomment(comment_id, user_id) // isPerssion是一个boolean类型
+    if (!isPerssion) throw new Error()
+    await next()
+  } catch (err) {
+    console.log(err);
+    const error = new Error(errorTypes.WITHOUTPERSSION)
+    return ctx.app.emit('error', error, ctx)
   }
 }
 
 module.exports = {
   verifyLogin,
   verifyAuth,
+  verifyPerssion,
 }
