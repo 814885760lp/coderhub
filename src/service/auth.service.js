@@ -1,9 +1,9 @@
 const connection = require('../app/database')
 
 class AuthService {
-  async checkMomment(comment_id, user_id) {
-    const statement = `SELECT * FROM moment WHERE id = ? && user_id = ?`
-    const [result] = await connection.execute(statement, [comment_id, user_id])
+  async checkResource(tableName, resourceId, userId) {
+    const statement = `SELECT * FROM ${tableName} WHERE id = ? && user_id = ?`
+    const [result] = await connection.execute(statement, [resourceId, userId])
     return result.length !== 0
   }
 }

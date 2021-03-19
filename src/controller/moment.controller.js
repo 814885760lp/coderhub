@@ -4,18 +4,18 @@ class MomentController {
   async create(ctx, next) {
     // 获取动态
     const { content } = ctx.request.body
-    const { id: user_id } = ctx.user
+    const userId = ctx.user.id
     // 插入动态数据到数据库
-    const result = await momentService.create(content, user_id)
+    const result = await momentService.create(content, userId)
     // 返回数据
     ctx.body = result
   }
 
   async detail(ctx, next) {
     // 获取查询参数id
-    const commentId = ctx.params.id
+    const {momentId} = ctx.params
     // 查询数据库
-    const result = await momentService.detail(commentId)
+    const result = await momentService.detail(momentId)
     // 返回数据
     ctx.body = result
   }
@@ -31,15 +31,14 @@ class MomentController {
 
   async update(ctx, next) {
     const { content } = ctx.request.body
-    const { comment_id } = ctx.params
-    const result = await momentService.update(content, comment_id)
+    const { momentId } = ctx.params
+    const result = await momentService.update(content, momentId)
     ctx.body = result
   }
 
   async remove(ctx, next) {
-    const { comment_id } = ctx.params
-    console.log(comment_id);
-    const result = await momentService.remove(comment_id)
+    const { momentId } = ctx.params
+    const result = await momentService.remove(momentId)
     ctx.body = result
   }
 }

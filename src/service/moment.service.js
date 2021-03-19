@@ -29,15 +29,15 @@ class MomentService {
     return result
   }
 
-  async update(content, comment_id) {
+  async update(content, commentId) {
     const statement = `UPDATE moment SET content = ? WHERE id = ?`
-    const [result] = await connection.execute(statement, [content, comment_id])
+    const [result] = await connection.execute(statement, [content, commentId])
     return result
   }
 
-  async remove(comment_id) {
+  async remove(commentId) {
     const statement = `DELETE FROM moment WHERE id = ?`
-    const [result] = await connection.execute(statement, [ comment_id])
+    const [result] = await connection.execute(statement, [ commentId])
     return result
   }
 }

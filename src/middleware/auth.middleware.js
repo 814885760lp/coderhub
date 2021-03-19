@@ -30,7 +30,7 @@ const verifyLogin = async (ctx, next) => {
     return ctx.app.emit('error', error, ctx)
   }
 
-  // user要在验证通过后赋值给ctx
+  // user要在验证通过后赋值给ctx，后续需要使用到用户信息
   ctx.user = user
 
   await next()
@@ -47,14 +47,14 @@ const verifyAuth = async (ctx, next) => {
     return ctx.app.emit('error', error, ctx)
   }
 
-  const token = authorization.replace('Bearer ', '') // 截取出来真正的token6
+  const token = authorization.replace('Bearer ', '') // 截取出来真正的token
 
   try {
     // 验证token
     const result = jwt.verify(token, PUBLIC_KEY, {
       algorithms: ['RS256'],
     })
-    ctx.user = result // verifyAuth为通用组件，将user存储起来，后面发布动态等中间件需要使用
+    ctx.user = result // verifyAuth为通用组件，将user存储起来，后面其他中间件需要使用到用户信息
     await next()
   } catch (err) {
     console.log(err)
@@ -64,18 +64,21 @@ const verifyAuth = async (ctx, next) => {
 }
 
 const verifyPerssion = async (ctx, next) => {
-
-  // 获取动态id和用户id
-  const { comment_id } = ctx.params // 动态id
-  const { id: user_id } = ctx.user // 发布者id
-
-  // 查询用户是否具有删除该条评论的权限
+  const [resourKey] = Object.keys(ctx.params) // 获取params中的动态参数id
+  const tableName = resourKey.replace('Id', '') // 获取要操作的数据表
+  const resourceId = ctx.params[resourKey] // 资源id
+  const userId = ctx.user.id // 当前操作用户id
+  // 查询用户是否具有操作权限
   try {
-    const isPerssion = await authService.checkMomment(comment_id, user_id) // isPerssion是一个boolean类型
-    if (!isPerssion) throw new Error()
+    const isPerssion = await authService.checkResource(
+      tableName,
+      resourceId,
+      userId
+    ) // boolean类型
+    if (!isPerssion) throw new Error() // 抛出异常后直接出发catch回调，不执行后续的next方法
     await next()
   } catch (err) {
-    console.log(err);
+    console.log(err)
     const error = new Error(errorTypes.WITHOUTPERSSION)
     return ctx.app.emit('error', error, ctx)
   }
