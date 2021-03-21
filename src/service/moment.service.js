@@ -18,7 +18,10 @@ class MomentService {
   }
 
   async detail(momentId) {
+    // 获取动态详情时同时获取评论列表，有两种方案
+    // 方案一: detail方法如下，新增一个单独的获取评论列表的接口
     // const statement = `${sqlFragment} WHERE m.id = ?`
+    // 方案二：同时获取动态详情和评论列表
     const statement = `  
     SELECT 
       m.id id, 
@@ -71,6 +74,18 @@ class MomentService {
   async remove(momentId) {
     const statement = `DELETE FROM moment WHERE id = ?`
     const [result] = await connection.execute(statement, [momentId])
+    return result
+  }
+
+  async hasLabel(momentId, lableId) {
+    const statement = `SELECT * FROM moment_label WHERE moment_id = ? && label_id = ?`
+    const [result] = await connection.execute(statement, [momentId, lableId])
+    return result.length !== 0
+  }
+
+  async addLabels(momentId, lableId) {
+    const statement = `INSERT INTO moment_label (moment_id, label_id) VALUES (?, ?)`
+    const [result] = await connection.execute(statement, [momentId, lableId])
     return result
   }
 }
