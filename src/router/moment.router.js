@@ -12,10 +12,10 @@ const momentRouter = new Router({
   prefix: '/moment',
 })
 
-momentRouter.post('/', verifyAuth, create)
-momentRouter.get('/', list) // 无需登录
-momentRouter.get('/:momentId', detail) // 无需登录
-momentRouter.patch('/:momentId', verifyAuth, verifyPerssion, update)
-momentRouter.delete('/:momentId', verifyAuth, verifyPerssion, remove)
+momentRouter.post('/', verifyAuth, create) // 发布动态
+momentRouter.get('/', list) // 获取动态列表，无需登录
+momentRouter.get('/:momentId', detail) // 获取动态详情，无需登录
+momentRouter.patch('/:momentId', verifyAuth, verifyPerssion, update) // 修改动态
+momentRouter.delete('/:momentId', verifyAuth, verifyPerssion, remove) // 删除动态
 
 module.exports = momentRouter
