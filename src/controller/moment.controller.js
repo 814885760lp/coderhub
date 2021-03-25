@@ -22,9 +22,9 @@ class MomentController {
 
   async list(ctx, next) {
     // 获取查询参数偏移量和查询条数
-    const { offset, size } = ctx.query
+    const { limit, offset } = ctx.query
     // 查询数据库
-    const result = await momentService.list(offset, size)
+    const result = await momentService.list(limit, offset)
     // 返回数据
     ctx.body = result
   }
