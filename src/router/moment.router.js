@@ -5,7 +5,8 @@ const {
   list,
   update,
   remove,
-  addLabels
+  addLabels,
+  getMomentPicture
 } = require('../controller/moment.controller')
 const { verifyAuth, verifyPerssion } = require('../middleware/auth.middleware')
 const { verifyLabelExists } = require('../middleware/label.middleware')
@@ -19,5 +20,7 @@ momentRouter.get('/:momentId', detail) // 获取动态详情，无需登录
 momentRouter.patch('/:momentId', verifyAuth, verifyPerssion, update) // 修改动态
 momentRouter.delete('/:momentId', verifyAuth, verifyPerssion, remove) // 删除动态
 momentRouter.post('/:momentId', verifyAuth, verifyPerssion, verifyLabelExists, addLabels) // 给动态添加标签
+momentRouter.get('/images/:filename', getMomentPicture) // 获取动态配图
+
 
 module.exports = momentRouter

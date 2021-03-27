@@ -6,7 +6,7 @@ const sqlFragment = `
     m.content content, 
     m.createAt createTime, 
     m.updateAt updateTime, 
-    JSON_OBJECT('id', u.id, 'name', u.name) author
+    JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) author
   FROM moment m LEFT JOIN user u ON m.user_id = u.id
 `
 
@@ -28,7 +28,7 @@ class MomentService {
         m.content content, 
         m.createAt createTime, 
         m.updateAt updateTime, 
-        JSON_OBJECT('id', u.id, 'name', u.name) author,
+        JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) author,
 		    JSON_ARRAYAGG(
           JSON_OBJECT(
 		        'id', c.id, 
@@ -36,9 +36,11 @@ class MomentService {
 		        'commentId', c.comment_id, 
 		        'createTime', c.createAt, 
 		        'updateTime', c.updateAt,
-		        'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
+		        'user', JSON_OBJECT('id', cu.id, 'name', cu.name, 'avatarUrl', cu.avatar_url)
           )
-        ) comments
+        ) comments,
+        (SELECT JSON_ARRAYAGG(CONCAT('http://localhost:8000/moment/images/', file.filename)) 
+					FROM file WHERE m.id = file.moment_id) images
       FROM moment m 
 	    LEFT JOIN user u ON u.id = m.user_id
 	    LEFT JOIN comment c ON c.moment_id = m.id
@@ -56,7 +58,7 @@ class MomentService {
         m.content content, 
         m.createAt createTime, 
         m.updateAt updateTime, 
-        JSON_OBJECT('id', u.id, 'name', u.name) author,
+        JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) author,
         (SELECT COUNT(*) FROM comment c WHERE c.moment_id = m.id) commentCount,
         (SELECT COUNT(*) FROM moment_label ml WHERE ml.moment_id = m.id) labelCounts
       FROM moment m 

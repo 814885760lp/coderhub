@@ -15,6 +15,13 @@ class UserService {
     const result = await connection.execute(statement, [name])
     return result[0]
   }
+
+  // 增加用户头像
+  async addUserAvatar(avatarUrl, id) {
+    const statement = `UPDATE user SET avatar_url = ? WHERE id = ?;`
+    const [result] = await connection.execute(statement, [avatarUrl, id])
+    return result
+  }
 }
 
 module.exports = new UserService()

@@ -1,4 +1,7 @@
+const fs = require('fs')
 const momentService = require('../service/moment.service')
+const fileService = require('../service/file.service')
+const { PICTURE_PATH } = require('../constants/file-path')
 
 class MomentController {
   async create(ctx, next) {
@@ -56,6 +59,24 @@ class MomentController {
     }
 
     ctx.body = '标签添加成功'
+  }
+
+  async getMomentPicture(ctx, next) {
+    try {
+      let { filename } = ctx.params
+      const pictureInfo = await fileService.getMomentPictureByFilename(filename)
+      const { type } = ctx.query
+
+      const types = ['small', 'middle', 'large']
+      if (types.some((item) => item === type)) {
+        filename = filename + '-' + type
+      }
+
+      ctx.response.set('content-type', pictureInfo.mimetype) // 设置类型，否则图片无法打开，在浏览器中会直接下载文件
+      ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`)
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 
