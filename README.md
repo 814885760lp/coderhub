@@ -1,8 +1,6 @@
 # coderhub
 > 一个基于 Node+koa2 的后台项目，接口文档如下
 
-# coderhub接口文档
-
 #### baseUrl: localhost:8000
 
 ------
